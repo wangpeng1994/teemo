@@ -17,9 +17,6 @@ public class Main {
             System.out.println(response1.getStatusLine());
             HttpEntity entity1;
             entity1 = response1.getEntity();
-            // do something useful with the response body
-            // and ensure it is fully consumed
-//            EntityUtils.consume(entity1);
             System.out.println(EntityUtils.toString(entity1));
         }
     }
