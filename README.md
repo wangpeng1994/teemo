@@ -1,3 +1,3 @@
 # teemo
-A multithread web crawler in Java.
+A multithread web crawler and using ElasticSearch for data analysis.
 
