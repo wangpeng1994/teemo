@@ -95,5 +95,4 @@ public class Main {
     private static boolean isNotLoginPage(String link) {
         return !link.contains("passport.sina.cn");
     }
-
 }
