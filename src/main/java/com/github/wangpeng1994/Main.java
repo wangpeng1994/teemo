@@ -17,56 +17,41 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.LinkedList;
-import java.util.List;
 
 public class Main {
 
     public static void main(String[] args) throws SQLException {
         Connection connection = DriverManager.getConnection("jdbc:h2:file:C:\\Users\\Administrator\\Projects\\tmp\\teemo\\news");
-        while (true) {
-            // 待处理的链接池
-            // 断点续传：每次都从数据库中加载
-            List<String> linkPool = loadUrlsFromDatabase(connection, "select link from LINKS_TO_BE_PROCESSED");
-
-            if (linkPool.isEmpty()) {
-                break;
-            }
-
-            // 从待处理链接池中取出一条进行处理
-            // 处理完后从池子（主要是数据库池子）中删除
-            String link = linkPool.remove(0);
-            updateLinkIntoDatabase(connection, link, "delete from LINKS_TO_BE_PROCESSED where link = ?");
-
+        String link;
+        while ((link = getNextLinkThenDelete(connection)) != null) {
             System.out.println(link);
-
-            // 询问数据库，当前链接是否已经被处理，防止重复处理
-            if (!isLinkProcessed(connection, link)) {
-                if (isInterestingLink(link)) {
-                    Document doc = httpGetAndParseHtml(link);
-                    parseUrlsFromPageAndStoreIntoDatabase(connection, doc);
-                    storeIntoDatabaseIfItIsNewsPage(doc);
-                    updateLinkIntoDatabase(connection, link, "insert into LINKS_ALREADY_PROCESSED (link) values (?)");
-                }
+            // 确保当前链接没有被处理且属感兴趣的链接
+            if (!isLinkProcessed(connection, link) && isInterestingLink(link)) {
+                Document doc = httpGetAndParseHtml(link);
+                parseUrlsFromPageAndStoreIntoDatabase(connection, doc);
+                storeIntoDatabaseIfItIsNewsPage(doc);
+                updateLinkIntoDatabase(connection, link, "insert into LINKS_ALREADY_PROCESSED (link) values (?)");
             }
-
         }
     }
 
-    private static List<String> loadUrlsFromDatabase(Connection connection, String sql) throws SQLException {
-        List<String> results = new LinkedList<>();
-        try (PreparedStatement statement = connection.prepareStatement(sql); ResultSet resultSet = statement.executeQuery()) {
+    private static String getNextLinkThenDelete(Connection connection) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement("select link from LINKS_TO_BE_PROCESSED limit 1");
+             ResultSet resultSet = statement.executeQuery()
+        ) {
             while (resultSet.next()) {
-                results.add(resultSet.getString(1));
+                String link = resultSet.getString(1);
+                updateLinkIntoDatabase(connection, link, "delete from LINKS_TO_BE_PROCESSED where link = ?");
+                return link;
             }
         }
-        return results;
+        return null;
     }
 
     private static void parseUrlsFromPageAndStoreIntoDatabase(Connection connection, Document doc) throws SQLException {
         for (Element aTag : doc.select("a")) {
-            String href = aTag.attr("href");
-            updateLinkIntoDatabase(connection, href, "insert into LINKS_TO_BE_PROCESSED (link) values (?)");
+            String link = aTag.attr("href");
+            updateLinkIntoDatabase(connection, link, "insert into LINKS_TO_BE_PROCESSED (link) values (?)");
         }
     }
 
