@@ -20,8 +20,11 @@ import java.sql.SQLException;
 
 public class Main {
 
+    private static final String USERNAME = "root";
+    private static final String PASSWORD = "root";
+
     public static void main(String[] args) throws SQLException {
-        Connection connection = DriverManager.getConnection("jdbc:h2:file:C:\\Users\\Administrator\\Projects\\tmp\\teemo\\news");
+        Connection connection = DriverManager.getConnection("jdbc:h2:file:C:\\Users\\Administrator\\Projects\\tmp\\teemo\\news", USERNAME, PASSWORD);
         String link;
         while ((link = getNextLinkThenDelete(connection)) != null) {
             System.out.println(link);
