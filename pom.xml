@@ -65,6 +65,12 @@
             <artifactId>mybatis</artifactId>
             <version>3.5.3</version>
         </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.18</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -127,7 +133,8 @@
                 <artifactId>flyway-maven-plugin</artifactId>
                 <version>6.0.8</version>
                 <configuration>
-                    <url>jdbc:h2:file:${project.basedir}/news</url>
+<!--                    <url>jdbc:h2:file:${project.basedir}/news</url>-->
+                    <url>jdbc:mysql://104.194.87.72:3306/news?characterEncoding=utf-8</url>
                     <user>root</user>
                     <password>root</password>
                 </configuration>
