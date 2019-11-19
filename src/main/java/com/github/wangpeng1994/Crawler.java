@@ -15,24 +15,28 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.stream.Collectors;
 
-public class Crawler {
-    private CrawlerDao dao = new MyBatisCrawlerDao();
+public class Crawler extends Thread {
+    private CrawlerDao dao;
 
-    public static void main(String[] args) throws SQLException {
-        new Crawler().run();
+    public Crawler(CrawlerDao dao) {
+        this.dao = dao;
     }
 
-    private void run() throws SQLException {
-        String link;
-
-        while ((link = dao.getNextLinkThenDelete()) != null) {
-            if (!dao.isLinkProcessed(link)) {
-                System.out.println(link);
-                Document doc = httpGetAndParseHtml(link);
-                parseUrlsFromPageAndStoreIntoDatabase(doc);
-                storeIntoDatabaseIfItIsNewsPage(doc, link);
-                dao.insertProcessedLink(link);
+    @Override
+    public void run() {
+        try {
+            String link;
+            while ((link = dao.getNextLinkThenDelete()) != null) {
+                if (!dao.isLinkProcessed(link)) {
+                    System.out.println(link);
+                    Document doc = httpGetAndParseHtml(link);
+                    parseUrlsFromPageAndStoreIntoDatabase(doc);
+                    storeIntoDatabaseIfItIsNewsPage(doc, link);
+                    dao.insertProcessedLink(link);
+                }
             }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
