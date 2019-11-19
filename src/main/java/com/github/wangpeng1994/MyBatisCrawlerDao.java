@@ -15,10 +15,9 @@ public class MyBatisCrawlerDao implements CrawlerDao {
     private SqlSessionFactory sqlSessionFactory;
 
     public MyBatisCrawlerDao() {
-        String resource = "db/mybatis/config.xml";
-        InputStream inputStream = null;
         try {
-            inputStream = Resources.getResourceAsStream(resource);
+            String resource = "db/mybatis/config.xml";
+            InputStream inputStream = Resources.getResourceAsStream(resource);
             sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
         } catch (IOException e) {
             e.printStackTrace();
