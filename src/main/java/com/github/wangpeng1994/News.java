@@ -1,10 +1,14 @@
 package com.github.wangpeng1994;
 
+import java.time.Instant;
+
 public class News {
     private Integer id;
     private String title;
     private String content;
     private String url;
+    private Instant createdAt;
+    private Instant updatedAt;
 
 
     public News(String title, String content, String url) {
@@ -43,5 +47,21 @@ public class News {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public Instant getCreateAt() {
+        return createdAt;
+    }
+
+    public void setCreateAt(Instant createAt) {
+        this.createdAt = createAt;
+    }
+
+    public Instant getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Instant updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }
