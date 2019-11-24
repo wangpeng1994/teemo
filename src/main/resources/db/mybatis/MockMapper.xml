@@ -10,5 +10,6 @@
     <select id="selectNews" resultType="com.github.wangpeng1994.News">
         select id, title, content, url, created_at, updated_at
         from NEWS
+        limit 2000
     </select>
 </mapper>

@@ -3,8 +3,6 @@
 A multithread web crawler and using ElasticSearch for data analysis.
 
 
-## GUIDE:
+## Documentation:
 
-1. Use the `mvn flyway:migrate` in command line to init a H2 database that will be placed in your `${basedir}/news`.
-
-2. Execute the Java code.
+[CN](https://www.yuque.com/docs/share/e19f9793-1545-4e3c-8700-bbbd2ab3ae75#)
